@@ -1,0 +1,52 @@
+class Mahasiswa {
+  constructor(nama, nim, nilai) {
+    this.nama = nama; // atribut publik
+    this.nim = nim;   // atribut publik
+    let _nilai = nilai; // atribut private 
+
+    // Getter untuk mengakses nilai
+    this.getNilai = function() {
+      return _nilai;
+    };
+
+    // Setter untuk mengubah nilai dengan validasi
+    this.setNilai = function(nilaiBaru) {
+      if (nilaiBaru >= 0 && nilaiBaru <= 100) {
+        _nilai = nilaiBaru;
+      } else {
+        console.log('Nilai harus antara 0 dan 100');
+      }
+    };
+
+    // Menampilkan informasi mahasiswa
+    this.informasiMahasiswa = function() {
+      console.log(`Nama: ${this.nama}, NIM: ${this.nim}, Nilai: ${_nilai}`);
+    };
+
+    // Menampilkan status remedial
+    this.nilaiRemedial = function() {
+      if (_nilai < 75) {
+        console.log(`${this.nama} perlu remedial`);
+      } else {
+        console.log(`${this.nama} lulus`);
+      }
+    };
+  }
+}
+
+let mhs1 = new Mahasiswa("Najwa Rizka", "202401110059", 70);
+mhs1.informasiMahasiswa(); // tampil info
+mhs1.nilaiRemedial();      // remedial
+
+mhs1.setNilai(90);         // ubah nilai
+mhs1.informasiMahasiswa(); // tampil info lagi
+mhs1.nilaiRemedial();      // lulus
+
+
+let mhs2 = new Mahasiswa("Setianingrum", "202401110059", 30);
+mhs2.informasiMahasiswa(); // tampil info
+mhs2.nilaiRemedial();      // remedial
+
+mhs2.setNilai(80);         // ubah nilai
+mhs2.informasiMahasiswa(); // tampil info lagi
+mhs2.nilaiRemedial();      // lulus
