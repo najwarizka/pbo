@@ -1,1 +1,120 @@
-Najwa Rizka setianingrum
+//Najwa Rizka setianingrum
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Login OOP - LocalStorage</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; }
+        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 300px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .hidden { display: none; }
+        #userInfo { text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="loginFormSection">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username (admin)">
+        <input type="password" id="password" placeholder="Password (12345)">
+        <button onclick="authApp.handleLogin()">Masuk</button>
+    </div>
+
+    <div id="dashboardSection" class="hidden">
+        <h2>Selamat Datang!</h2>
+        <div id="userInfoDisplay"></div>
+        <br>
+        <button onclick="authApp.handleLogout()" style="background-color: #dc3545;">Logout</button>
+    </div>
+</div>
+
+<script>
+/**
+ * Class AuthSystem menggunakan konsep OOP
+ * Mengelola data di LocalStorage dan proses autentikasi
+ */
+class AuthSystem {
+    constructor() {
+        this.dbKey = 'user_database';
+        this.sessionKey = 'current_user';
+        this.initDatabase();
+    }
+
+    // Inisialisasi data JSON awal ke LocalStorage jika belum ada
+    initDatabase() {
+        const existingData = localStorage.getItem(this.dbKey);
+        if (!existingData) {
+            const initialUsers = [
+                { "username": "admin", "password": "123", "name": "Administrator" },
+                { "username": "user1", "password": "password123", "name": "Budi Santoso" }
+            ];
+            localStorage.setItem(this.dbKey, JSON.stringify(initialUsers));
+        }
+        this.checkSession();
+    }
+
+    // Mengambil data user dari "database" (JSON di LocalStorage)
+    getUsers() {
+        return JSON.parse(localStorage.getItem(this.dbKey));
+    }
+
+    // Logika Validasi Login
+    login(username, password) {
+        const users = this.getUsers();
+        const user = users.find(u => u.username === username && u.password === password);
+
+        if (user) {
+            localStorage.setItem(this.sessionKey, JSON.stringify(user));
+            this.showDashboard(user);
+        } else {
+            alert("salah login");
+        }
+    }
+
+    // Logika Logout
+    logout() {
+        localStorage.removeItem(this.sessionKey);
+        location.reload();
+    }
+
+    // Cek apakah user sudah login sebelumnya
+    checkSession() {
+        const session = localStorage.getItem(this.sessionKey);
+        if (session) {
+            this.showDashboard(JSON.parse(session));
+        }
+    }
+
+    // Manipulasi DOM untuk Dashboard
+    showDashboard(user) {
+        document.getElementById('loginFormSection').classList.add('hidden');
+        document.getElementById('dashboardSection').classList.remove('hidden');
+        document.getElementById('userInfoDisplay').innerHTML = `
+            <p><strong>Nama:</strong> ${user.name}</p>
+            <p><strong>Username:</strong> ${user.username}</p>
+        `;
+    }
+
+    // Bridge antara UI Button dan Logika Class
+    handleLogin() {
+        const userIn = document.getElementById('username').value;
+        const passIn = document.getElementById('password').value;
+        this.login(userIn, passIn);
+    }
+
+    handleLogout() {
+        this.logout();
+    }
+}
+
+// Instansiasi Object
+const authApp = new AuthSystem();
+</script>
+
+</body>
+</html>
