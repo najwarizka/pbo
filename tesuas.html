@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Login System - OOP</title>
+    <style>
+        /* Desain Background & Dasar */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* Container Utama */
+        .container { 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 2.5rem; 
+            border-radius: 15px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
+            width: 350px; 
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        h2 { color: #333; margin-bottom: 1.5rem; }
+
+        /* Desain Input */
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-size: 12px; color: #666; margin-bottom: 5px; margin-left: 2px; }
+        
+        input { 
+            width: 100%; 
+            padding: 12px 15px; 
+            border: 2px solid #eee; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            outline: none;
+            transition: border-color 0.3s;
+            font-size: 14px;
+        }
+
+        input:focus { border-color: #764ba2; }
+
+        /* Desain Tombol */
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        button:active { transform: translateY(0); }
+
+        .btn-logout { background: #ff4b2b; margin-top: 20px; }
+
+        /* Profile Card di Dashboard */
+        .profile-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 5px solid #764ba2;
+        }
+
+        .hidden { display: none; }
+
+        /* Animasi muncul */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #loginFormSection, #dashboardSection { animation: fadeIn 0.5s ease-out; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="loginFormSection">
+        <h2>Welcome Back</h2>
+        <div class="input-group">
+            <label>Username</label>
+            <input type="text" id="username" placeholder="Masukkan username">
+        </div>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Masukkan password">
+        </div>
+        <button onclick="authApp.handleLogin()">SIGN IN</button>
+        <p style="font-size: 11px; color: #999; margin-top: 15px;">Hint: admin / 123</p>
+    </div>
+
+    <div id="dashboardSection" class="hidden">
+        <div style="font-size: 50px; margin-bottom: 10px;">👤</div>
+        <h2 style="margin-bottom: 5px;">Halo!</h2>
+        <p style="color: #666; margin-top: 0;">Anda berhasil masuk ke sistem.</p>
+        
+        <div id="userInfoDisplay" class="profile-card"></div>
+        
+        <button onclick="authApp.handleLogout()" class="btn-logout">LOGOUT</button>
+    </div>
+</div>
+
+<script>
+/**
+ * Class AuthSystem (OOP)
+ */
+class AuthSystem {
+    constructor() {
+        this.dbKey = 'user_database';
+        this.sessionKey = 'current_user';
+        this.initDatabase();
+    }
+
+    initDatabase() {
+        const existingData = localStorage.getItem(this.dbKey);
+        if (!existingData) {
+            const initialUsers = [
+                { "username": "admin", "password": "123", "name": "Administrator IT" },
+                { "username": "user1", "password": "password123", "name": "Budi Santoso" }
+            ];
+            localStorage.setItem(this.dbKey, JSON.stringify(initialUsers));
+        }
+        this.checkSession();
+    }
+
+    getUsers() {
+        return JSON.parse(localStorage.getItem(this.dbKey));
+    }
+
+    login(username, password) {
+        const users = this.getUsers();
+        const user = users.find(u => u.username === username && u.password === password);
+
+        if (user) {
+            localStorage.setItem(this.sessionKey, JSON.stringify(user));
+            this.showDashboard(user);
+        } else {
+            alert("⚠️ salah login: Username atau Password tidak cocok!");
+        }
+    }
+
+    logout() {
+        localStorage.removeItem(this.sessionKey);
+        location.reload();
+    }
+
+    checkSession() {
+        const session = localStorage.getItem(this.sessionKey);
+        if (session) {
+            this.showDashboard(JSON.parse(session));
+        }
+    }
+
+    showDashboard(user) {
+        document.getElementById('loginFormSection').classList.add('hidden');
+        document.getElementById('dashboardSection').classList.remove('hidden');
+        document.getElementById('userInfoDisplay').innerHTML = `
+            <div style="text-align: left;">
+                <div style="font-size: 12px; color: #888;">NAMA LENGKAP</div>
+                <div style="font-weight: bold; color: #333; margin-bottom: 8px;">${user.name}</div>
+                <div style="font-size: 12px; color: #888;">USERNAME</div>
+                <div style="font-weight: bold; color: #333;">@${user.username}</div>
+            </div>
+        `;
+    }
+
+    handleLogin() {
+        const userIn = document.getElementById('username').value;
+        const passIn = document.getElementById('password').value;
+        if(!userIn || !passIn) return alert("Isi semua bidang!");
+        this.login(userIn, passIn);
+    }
+
+    handleLogout() {
+        this.logout();
+    }
+}
+
+// Jalankan aplikasi
+const authApp = new AuthSystem();
+</script>
+
+</body>
+</html>
