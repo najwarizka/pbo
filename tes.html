@@ -9,15 +9,15 @@
             --sea-dark: #005f73;
             --sea-mid: #0a9396;
             --sea-light: #94d2bd;
-            --glass-white: rgba(255, 255, 255, 0.9);
-            --success-green: #28a745; /* Hijau */
-            --danger-red: #dc3545;    /* Merah */
+            --anime-white: rgba(255, 255, 255, 0.9);
+            --success-green: #2ecc71;
+            --danger-red: #e74c3c;
         }
 
         body { 
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Arial, sans-serif; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
@@ -26,164 +26,23 @@
         }
 
         .container { 
-            background: var(--glass-white); 
+            background: var(--anime-white); 
             padding: 2.5rem; 
-            border-radius: 15px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
             width: 90%; 
             max-width: 350px; 
             text-align: center;
-            border: 2px solid var(--sea-light);
+            border: 3px solid var(--sea-light);
+            position: relative;
         }
 
-        h2 { color: var(--sea-dark); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        h2 { color: var(--sea-dark); margin-bottom: 20px; }
 
         input { 
             width: 100%; 
             padding: 12px; 
             margin: 10px 0; 
-            border: 1px solid #ccc; 
-            border-radius: 5px; 
-            box-sizing: border-box; 
-            outline: none;
-        }
-
-        input:focus { border-color: var(--sea-mid); }
-
-        /* Tombol Login Hijau */
-        .btn-login { 
-            width: 100%; 
-            padding: 12px; 
-            background-color: var(--success-green); 
-            color: white; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-weight: bold;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        /* Tombol Kembali Merah */
-        .btn-logout { 
-            width: 100%; 
-            padding: 12px; 
-            background-color: var(--danger-red); 
-            color: white; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-weight: bold;
-            margin-top: 20px;
-        }
-
-        .hidden { display: none; }
-        
-        #userInfoDisplay {
-            margin-top: 15px;
-            font-size: 1.1rem;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        @media (max-width: 400px) {
-            .container { padding: 1.5rem; }
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <div id="loginFormSection">
-        <h2>Login</h2>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button class="btn-login" onclick="authApp.handleLogin()">Masuk</button>
-    </div>
-
-    <div id="dashboardSection" class="hidden">
-        <h2 style="color: var(--success-green);">Omedetou</h2>
-        <div id="userInfoDisplay"></div>
-        <button class="btn-logout" onclick="authApp.handleLogout()">Kembali</button>
-    </div>
-</div>
-
-<script>
-/**
- * Class AuthSystem (OOP)
- */
-class AuthSystem {
-    constructor() {
-        this.dbKey = 'app_user_db';
-        this.sessionKey = 'active_session';
-        this.initDatabase();
-    }
-
-    initDatabase() {
-        const existingData = localStorage.getItem(this.dbKey);
-        if (!existingData) {
-            // Data Set JSON sesuai permintaan
-            const dataSet = [
-                { 
-                    "username": "najwa", 
-                    "password": "najwa123"
-                }
-            ];
-            localStorage.setItem(this.dbKey, JSON.stringify(dataSet));
-        }
-        this.checkSession();
-    }
-
-    login(userIn, passIn) {
-        const users = JSON.parse(localStorage.getItem(this.dbKey));
-        const foundUser = users.find(u => u.username === userIn && u.password === passIn);
-
-        if (foundUser) {
-            localStorage.setItem(this.sessionKey, JSON.stringify(foundUser));
-            this.showDashboard(foundUser);
-        } else {
-            alert("salah login");
-        }
-    }
-
-    logout() {
-        localStorage.removeItem(this.sessionKey);
-        location.reload();
-    }
-
-    checkSession() {
-        const session = localStorage.getItem(this.sessionKey);
-        if (session) {
-            this.showDashboard(JSON.parse(session));
-        }
-    }
-
-    showDashboard(user) {
-        document.getElementById('loginFormSection').classList.add('hidden');
-        document.getElementById('dashboardSection').classList.remove('hidden');
-        
-        // Teks sesuai instruksi: selamat [username] berhasil masuk & nama najwa
-        document.getElementById('userInfoDisplay').innerHTML = `
-            <p>Selamat <strong>${user.username}</strong> yang di input sudah berhasil masuk</p>
-            <p style="font-size: 1.5rem; font-weight: bold; color: var(--sea-dark);">
-                ${user.username}
-            </p>
-        `;
-    }
-
-    handleLogin() {
-        const u = document.getElementById('username').value;
-        const p = document.getElementById('password').value;
-        this.login(u, p);
-    }
-
-    handleLogout() {
-        this.logout();
-    }
-}
-
-const authApp = new AuthSystem();
-</script>
-
-</body>
-</html>
+            border: 2px solid var(--sea-light); 
+            border-radius: 10px; 
+            box-sizing: border
