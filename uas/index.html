@@ -1,110 +1,208 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Login OOP - LocalStorage</title>
+    <title>Login - Najwa Edition</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; }
-        .container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 300px; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background-color: #0056b3; }
+        /* Variabel Warna Tema Biru Laut */
+        :root {
+            --sea-dark: #005f73;
+            --sea-mid: #0a9396;
+            --sea-light: #94d2bd;
+            --anime-white: rgba(255, 255, 255, 0.85);
+            --success-green: #2ecc71;
+            --danger-red: #e74c3c;
+        }
+
+        body { 
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            /* Background gradien estetik biru laut */
+            background: linear-gradient(180deg, #002147 0%, #005f73 100%);
+            overflow: hidden;
+        }
+
+        /* Container Responsif */
+        .container { 
+            background: var(--anime-white); 
+            padding: 2.5rem; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            width: 90%; 
+            max-width: 350px; /* Ukuran pas untuk mobile & desktop */
+            text-align: center;
+            border: 3px solid var(--sea-light);
+            backdrop-filter: blur(5px);
+            position: relative;
+        }
+
+        /* Hiasan Anime Simple */
+        .container::before {
+            content: "🌊";
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 40px;
+        }
+
+        h2 { color: var(--sea-dark); margin-bottom: 20px; }
+
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 10px 0; 
+            border: 2px solid var(--sea-light); 
+            border-radius: 10px; 
+            box-sizing: border-box; 
+            outline: none;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Warna Login Hijau sesuai permintaan */
+        .btn-login { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: var(--success-green); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-weight: bold;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover { background-color: #27ae60; transform: scale(1.02); }
+
+        /* Warna Kembali/Logout Merah sesuai permintaan */
+        .btn-logout { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: var(--danger-red); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-logout:hover { background-color: #c0392b; }
+
         .hidden { display: none; }
-        #userInfo { text-align: center; }
+        
+        #userInfoDisplay {
+            background: rgba(148, 210, 189, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            color: var(--sea-dark);
+            border: 1px dashed var(--sea-dark);
+        }
+
+        /* Responsivitas Layar Kecil */
+        @media (max-width: 400px) {
+            .container { padding: 1.5rem; }
+            h2 { font-size: 1.2rem; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="loginFormSection">
-        <h2>Login</h2>
-        <input type="text" id="username" placeholder="Username (admin)">
-        <input type="password" id="password" placeholder="Password (12345)">
-        <button onclick="authApp.handleLogin()">Masuk</button>
+        <h2>Login 🐬</h2>
+        <input type="text" id="username" placeholder="Username (najwa)">
+        <input type="password" id="password" placeholder="Password (najwa123)">
+        <button class="btn-login" onclick="authApp.handleLogin()">LOGIN</button>
     </div>
 
     <div id="dashboardSection" class="hidden">
-        <h2>Selamat Datang!</h2>
+        <h2>Omedetou! ✨</h2>
+        <p>Sudah berhasil masuk.</p>
         <div id="userInfoDisplay"></div>
         <br>
-        <button onclick="authApp.handleLogout()" style="background-color: #dc3545;">Logout</button>
+        <button class="btn-logout" onclick="authApp.handleLogout()">LOGOUT</button>
     </div>
 </div>
 
 <script>
 /**
- * Class AuthSystem menggunakan konsep OOP
- * Mengelola data di LocalStorage dan proses autentikasi
+ * Class AuthSystem - Pendekatan OOP
  */
 class AuthSystem {
     constructor() {
-        this.dbKey = 'user_database';
-        this.sessionKey = 'current_user';
+        this.dbKey = 'anime_user_db';
+        this.sessionKey = 'active_session';
         this.initDatabase();
     }
 
-    // Inisialisasi data JSON awal ke LocalStorage jika belum ada
+    // Dataset JSON sesuai permintaan: najwa & najwa123
     initDatabase() {
-        const existingData = localStorage.getItem(this.dbKey);
-        if (!existingData) {
-            const initialUsers = [
-                { "username": "admin", "password": "123", "name": "Administrator" },
-                { "username": "user1", "password": "password123", "name": "Budi Santoso" }
-            ];
-            localStorage.setItem(this.dbKey, JSON.stringify(initialUsers));
+    const dataSet = [
+        { 
+            "username": "najwa", 
+            "password": "najwa123", 
+            "name": "Najwa", 
+            "role": "Premium Member" 
         }
-        this.checkSession();
-    }
+    ];
+    localStorage.setItem(this.dbKey, JSON.stringify(dataSet));
+    this.checkActiveSession();
+}
 
-    // Mengambil data user dari "database" (JSON di LocalStorage)
     getUsers() {
         return JSON.parse(localStorage.getItem(this.dbKey));
     }
 
-    // Logika Validasi Login
-    login(username, password) {
+    login(userIn, passIn) {
         const users = this.getUsers();
-        const user = users.find(u => u.username === username && u.password === password);
+        const foundUser = users.find(u => u.username === userIn && u.password === passIn);
 
-        if (user) {
-            localStorage.setItem(this.sessionKey, JSON.stringify(user));
-            this.showDashboard(user);
+        if (foundUser) {
+            localStorage.setItem(this.sessionKey, JSON.stringify(foundUser));
+            this.renderUI(foundUser);
         } else {
-            alert("salah login");
+            // Sesuai soal: alert "aduh salah login"
+            alert("aduh salah login");
         }
     }
 
-    // Logika Logout
     logout() {
         localStorage.removeItem(this.sessionKey);
         location.reload();
     }
 
-    // Cek apakah user sudah login sebelumnya
-    checkSession() {
+    checkActiveSession() {
         const session = localStorage.getItem(this.sessionKey);
         if (session) {
-            this.showDashboard(JSON.parse(session));
+            this.renderUI(JSON.parse(session));
         }
     }
 
-    // Manipulasi DOM untuk Dashboard
-    showDashboard(user) {
+    // Menampilkan Info Halaman User
+    renderUI(user) {
         document.getElementById('loginFormSection').classList.add('hidden');
         document.getElementById('dashboardSection').classList.remove('hidden');
         document.getElementById('userInfoDisplay').innerHTML = `
             <p><strong>Nama:</strong> ${user.name}</p>
-            <p><strong>Username:</strong> ${user.username}</p>
+            <p><strong>Status:</strong> ${user.role}</p>
+            <p><strong>ID:</strong> #001-OCEAN</p>
         `;
     }
 
-    // Bridge antara UI Button dan Logika Class
+    // Controller untuk Button
     handleLogin() {
-        const userIn = document.getElementById('username').value;
-        const passIn = document.getElementById('password').value;
-        this.login(userIn, passIn);
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('password').value;
+        this.login(u, p);
     }
 
     handleLogout() {
@@ -112,7 +210,7 @@ class AuthSystem {
     }
 }
 
-// Instansiasi Object
+// Inisialisasi Object
 const authApp = new AuthSystem();
 </script>
 
