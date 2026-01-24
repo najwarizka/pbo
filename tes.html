@@ -35,7 +35,7 @@
             border-radius: 20px; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
             width: 90%; 
-            max-width: 350px; /* Ukuran pas untuk mobile & desktop */
+            max-width: 350px; 
             text-align: center;
             border: 3px solid var(--sea-light);
             backdrop-filter: blur(5px);
@@ -65,7 +65,7 @@
             background: rgba(255, 255, 255, 0.9);
         }
 
-        /* Warna Login Hijau sesuai permintaan */
+        /* Warna Login Hijau */
         .btn-login { 
             width: 100%; 
             padding: 12px; 
@@ -81,7 +81,7 @@
 
         .btn-login:hover { background-color: #27ae60; transform: scale(1.02); }
 
-        /* Warna Kembali/Logout Merah sesuai permintaan */
+        /* Warna Kembali Merah */
         .btn-logout { 
             width: 100%; 
             padding: 12px; 
@@ -105,9 +105,9 @@
             margin-top: 15px;
             color: var(--sea-dark);
             border: 1px dashed var(--sea-dark);
+            text-align: left;
         }
 
-        /* Responsivitas Layar Kecil */
         @media (max-width: 400px) {
             .container { padding: 1.5rem; }
             h2 { font-size: 1.2rem; }
@@ -125,7 +125,7 @@
     </div>
 
     <div id="dashboardSection" class="hidden">
-        <h2>Omedetou! ✨</h2>
+        <h2 style="color: var(--success-green);">Omedetou! ✨</h2>
         <p>Sudah berhasil masuk.</p>
         <div id="userInfoDisplay"></div>
         <br>
@@ -134,28 +134,26 @@
 </div>
 
 <script>
-/**
- * Class AuthSystem - Pendekatan OOP
- */
 class AuthSystem {
     constructor() {
-        this.dbKey = 'anime_user_db';
-        this.sessionKey = 'active_session';
+        this.dbKey = 'anime_user_db_final';
+        this.sessionKey = 'active_session_final';
         this.initDatabase();
     }
 
-    // Dataset JSON sesuai permintaan: najwa & najwa123
     initDatabase() {
         const existingData = localStorage.getItem(this.dbKey);
+        // Selalu update data jika username/nama berubah di kode
+        const dataSet = [
+            { 
+                "username": "najwa", 
+                "password": "najwa123", 
+                "name": "Najwa", 
+                "role": "Premium Member" 
+            }
+        ];
+        
         if (!existingData) {
-            const dataSet = [
-                { 
-                    "username": "najwa", 
-                    "password": "najwa123", 
-                    "name": "Najwa", 
-                    "role": "Premium Member" 
-                }
-            ];
             localStorage.setItem(this.dbKey, JSON.stringify(dataSet));
         }
         this.checkActiveSession();
@@ -173,8 +171,7 @@ class AuthSystem {
             localStorage.setItem(this.sessionKey, JSON.stringify(foundUser));
             this.renderUI(foundUser);
         } else {
-            // Sesuai soal: alert "aduh salah login"
-            alert("aduh salah login");
+            alert("salah login");
         }
     }
 
@@ -190,18 +187,16 @@ class AuthSystem {
         }
     }
 
-    // Menampilkan Info Halaman User
     renderUI(user) {
         document.getElementById('loginFormSection').classList.add('hidden');
         document.getElementById('dashboardSection').classList.remove('hidden');
         document.getElementById('userInfoDisplay').innerHTML = `
-            <p><strong>Nama:</strong> ${user.name}</p>
+            <p><strong>Nama:</strong> ${user.name} 🎀</p>
             <p><strong>Status:</strong> ${user.role}</p>
             <p><strong>ID:</strong> #001-OCEAN</p>
         `;
     }
 
-    // Controller untuk Button
     handleLogin() {
         const u = document.getElementById('username').value;
         const p = document.getElementById('password').value;
@@ -213,7 +208,6 @@ class AuthSystem {
     }
 }
 
-// Inisialisasi Object
 const authApp = new AuthSystem();
 </script>
 
