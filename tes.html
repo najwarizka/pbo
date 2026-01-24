@@ -129,7 +129,7 @@
         <p>Sudah berhasil masuk.</p>
         <div id="userInfoDisplay"></div>
         <br>
-        <button class="btn-logout" onclick="authApp.handleLogout()">KEMBALI</button>
+        <button class="btn-logout" onclick="authApp.handleLogout()">LOGOUT</button>
     </div>
 </div>
 
@@ -146,20 +146,17 @@ class AuthSystem {
 
     // Dataset JSON sesuai permintaan: najwa & najwa123
     initDatabase() {
-        const existingData = localStorage.getItem(this.dbKey);
-        if (!existingData) {
-            const dataSet = [
-                { 
-                    "username": "najwa", 
-                    "password": "najwa123", 
-                    "name": "Najwa", 
-                    "role": "Premium Member" 
-                }
-            ];
-            localStorage.setItem(this.dbKey, JSON.stringify(dataSet));
+    const dataSet = [
+        { 
+            "username": "najwa", 
+            "password": "najwa123", 
+            "name": "Najwa", 
+            "role": "Premium Member" 
         }
-        this.checkActiveSession();
-    }
+    ];
+    localStorage.setItem(this.dbKey, JSON.stringify(dataSet));
+    this.checkActiveSession();
+}
 
     getUsers() {
         return JSON.parse(localStorage.getItem(this.dbKey));
